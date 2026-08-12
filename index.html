@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EarnView BD Task</title>
+    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -18,42 +19,50 @@
             background-color: #f4f6f9;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             min-height: 100vh;
         }
         .card {
             background: #ffffff;
             padding: 25px 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             max-width: 350px;
             width: 100%;
         }
         h2 {
-            font-size: 20px;
             color: #333;
             margin-bottom: 10px;
+            font-size: 20px;
         }
         p {
-            font-size: 14px;
             color: #666;
-            margin-bottom: 20px;
+            font-size: 14px;
+            margin-bottom: 15px;
             line-height: 1.4;
         }
+        .status-msg {
+            font-size: 13px;
+            color: #d9534f;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
         .timer-box {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
             color: #e74c3c;
             margin: 15px 0;
         }
         .btn {
+            display: block;
             width: 100%;
             padding: 12px;
-            border: none;
             border-radius: 8px;
             font-size: 16px;
             font-weight: bold;
+            text-decoration: none;
+            border: none;
             cursor: pointer;
             margin-top: 10px;
             transition: 0.3s;
@@ -61,16 +70,14 @@
         .btn-ad {
             background-color: #0088cc;
             color: white;
-            text-decoration: none;
-            display: inline-block;
         }
         .btn-claim {
             background-color: #2ecc71;
             color: white;
         }
-        .btn:disabled {
-            background-color: #bdc3c7;
-            color: #7f8c8d;
+        .btn-claim:disabled {
+            background-color: #ccc;
+            color: #666;
             cursor: not-allowed;
         }
     </style>
@@ -79,51 +86,67 @@
 
     <div class="card">
         <h2>EarnView BD Task</h2>
-        <p>এড দেখা শেষ হওয়া পর্যন্ত পেজেই থাকুন। টাইমার শেষ হলে টাকা ক্লেইম করুন।</p>
+        <p>নিচের এড বাটনে ক্লিক করে এড দেখুন। এডে না গেলে টাইমার চালু হবে না!</p>
 
-        <!-- স্মার্ট লিঙ্কের বাটন -->
-        <a href="https://www.effectivecpmnetwork.com/mub2fys1s?key=25d39d2df2a65324f9e407193357dee0" target="_blank" class="btn btn-ad" id="ad-btn" onclick="openAd()">▶️ এখানে ক্লিক করে এড দেখুন</a>
+        <!-- আপনার স্মার্ট এড লিঙ্ক -->
+        <a href="https://www.effectivecpmnetwork.com/mub2fys1s?key=25d39d2df2a65324f9e407193357dee0" 
+           target="_blank" 
+           class="btn btn-ad" 
+           onclick="startTimer()">▶️ ক্লিক করে এড দেখুন</a>
 
-        <div class="timer-box" id="timer">২০</div>
+        <div class="status-msg" id="status-msg">⚠️ টাইমার শুরু করতে আগে এডে ক্লিক করুন!</div>
+        <div class="timer-box" id="timer">20</div>
 
         <button class="btn btn-claim" id="claim-btn" disabled onclick="completeTask()">💰 টাকা ক্লেইম করুন</button>
     </div>
 
     <script>
+        // Telegram WebApp ইনিশিয়ালাইজেশন
+        const tg = window.Telegram ? window.Telegram.WebApp : null;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
+
         let timeLeft = 20;
         let timerElement = document.getElementById('timer');
         let claimBtn = document.getElementById('claim-btn');
-        let adOpened = false;
+        let statusMsg = document.getElementById('status-msg');
+        let timerStarted = false;
 
-        function openAd() {
-            adOpened = true;
+        function startTimer() {
+            if (timerStarted) return; 
+            timerStarted = true;
+
+            statusMsg.innerText = "✅ এড লোড হচ্ছে... ২০ সেকেন্ড পেজে থাকুন!";
+            statusMsg.style.color = "#0088cc";
+
+            let countdown = setInterval(() => {
+                timeLeft--;
+                timerElement.innerText = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    timerElement.innerText = "✅ সময় শেষ!";
+                    timerElement.style.color = "#2ecc71";
+                    statusMsg.innerText = "এখন টাকা ক্লেইম করতে পারবেন।";
+                    statusMsg.style.color = "#2ecc71";
+                    claimBtn.disabled = false;
+                }
+            }, 1000);
         }
 
-        // অটোমেটিক স্মার্ট লিঙ্ক ওপেন করা (যদি ইউজার ক্লিক না করে)
-        window.onload = function() {
-            setTimeout(function() {
-                window.open("https://www.effectivecpmnetwork.com/mub2fys1s?key=25d39d2df2a65324f9e407193357dee0", "_blank");
-            }, 1000);
-        };
-
-        let countdown = setInterval(() => {
-            timeLeft--;
-            timerElement.innerText = timeLeft;
-            if (timeLeft <= 0) {
-                clearInterval(countdown);
-                timerElement.innerText = "✅ সময় শেষ!";
-                timerElement.style.color = "#2ecc71";
-                timerElement.style.fontSize = "20px";
-                claimBtn.disabled = false;
-            }
-        }, 1000);
-
         function completeTask() {
-            if (window.Telegram && window.Telegram.WebApp) {
-                Telegram.WebApp.sendData(JSON.stringify({ status: "success" }));
-                Telegram.WebApp.close();
+            if (tg) {
+                // বটের কাছে ভেরিফিকেশন ডাটা পাঠানো
+                tg.sendData(JSON.stringify({ status: "success" }));
+                
+                // সেন্ড হওয়ার নিশ্চিতের জন্য সামান্য বিরতি দিয়ে মিনি অ্যাপ বন্ধ করা
+                setTimeout(() => {
+                    tg.close();
+                }, 300);
             } else {
-                alert("টাস্ক সফল হয়েছে!");
+                alert("টাস্ক সফল হয়েছে! (টেলিগ্রাম অ্যাপ থেকে খুলুন)");
             }
         }
     </script>
