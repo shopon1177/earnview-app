@@ -3,85 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EarnView BD Task</title>
-    <!-- Telegram WebApp SDK -->
+    <title>EarnView Task</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f6f9;
-            padding: 20px;
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
         }
-        .card {
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            max-width: 400px;
-            margin: auto;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 15px;
+            background-color: #f4f4f9;
         }
-        h2 { color: #333; }
-        .timer {
-            font-size: 32px;
+        .header-title {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        .ad-container {
+            width: 100%;
+            height: 380px;
+            border: 2px dashed #0088cc;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            background-color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .timer-box {
+            font-size: 16px;
             font-weight: bold;
-            color: #e74c3c;
-            margin: 20px 0;
+            color: #d9534f;
+            margin-bottom: 15px;
         }
         button {
-            background-color: #27ae60;
+            width: 100%;
+            padding: 14px;
+            background-color: #28a745;
             color: white;
-            padding: 12px 25px;
-            font-size: 16px;
             border: none;
             border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            display: none;
+            transition: background 0.3s;
         }
-        button:hover { background-color: #219150; }
+        button:disabled {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h2> EarnView BD Task</h2>
-        <p>এড দেখা শেষ হওয়া পর্যন্ত পেজেই থাকুন। টাইমার শেষ হলে টাকা ক্লেইম করুন।</p>
-        
-        <div id="timer" class="timer">20</div>
-        
-        <button id="claimBtn" onclick="claimTaskReward()">✅ Claim Reward</button>
+    <h3 class="header-title">📺 ২০ সেকেন্ড মনোযোগ দিয়ে এডটি দেখুন</h3>
+
+    <!-- স্মার্ট লিঙ্ক বসানো এড ফ্রেম -->
+    <div class="ad-container">
+        <iframe src="https://www.effectivecpmnetwork.com/mub2fys1s?key=25d39d2df2a65324f9e407193357dee0"></iframe>
     </div>
+
+    <div class="timer-box" id="timer">টাইমার: ২০ সেকেন্ড বাকি</div>
+    <button id="claim-btn" disabled onclick="completeTask()">💰 টাকা ক্লেম করুন</button>
 
     <script>
         let timeLeft = 20;
-        let timerElement = document.getElementById("timer");
-        let claimBtn = document.getElementById("claimBtn");
+        let timerElement = document.getElementById('timer');
+        let claimBtn = document.getElementById('claim-btn');
 
-        // টাইমার চালু করা
-        let countdown = setInterval(function() {
+        let countdown = setInterval(() => {
             timeLeft--;
-            timerElement.textContent = timeLeft;
-
+            timerElement.innerText = "টাইমার: " + timeLeft + " সেকেন্ড বাকি";
             if (timeLeft <= 0) {
                 clearInterval(countdown);
-                timerElement.style.display = "none";
-                claimBtn.style.display = "inline-block";
+                timerElement.innerText = "✅ সময় শেষ! এখন টাকা ক্লেম করুন।";
+                timerElement.style.color = "#28a745";
+                claimBtn.disabled = false;
             }
         }, 1000);
 
-        // টেলিগ্রাম বটের কাছে ডাটা পাঠাতে এই ফাংশনটি কল হবে
-        function claimTaskReward() {
-            let tg = window.Telegram.WebApp;
-            tg.expand();
-            
-            // টাকা যোগের সংকেত বটের কাছে পাঠানো হচ্ছে
-            tg.sendData(JSON.stringify({ status: "success" }));
-            
-            // মিনি অ্যাপ অটো বন্ধ হবে
-            tg.close();
+        function completeTask() {
+            if (window.Telegram && window.Telegram.WebApp) {
+                Telegram.WebApp.sendData(JSON.stringify({ status: "success" }));
+                Telegram.WebApp.close();
+            } else {
+                alert("টাস্ক সফল হয়েছে!");
+            }
         }
     </script>
-
 </body>
 </html>
