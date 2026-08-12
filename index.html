@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EarnView BD Task</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f6f9;
+            padding: 20px;
+            margin: 0;
+        }
+        .card {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+        h2 { color: #333; }
+        .timer {
+            font-size: 32px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 20px 0;
+        }
+        button {
+            background-color: #27ae60;
+            color: white;
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: none;
+        }
+        button:hover { background-color: #219150; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2> EarnView BD Task</h2>
+        <p>এড দেখা শেষ হওয়া পর্যন্ত পেজেই থাকুন। টাইমার শেষ হলে টাকা ক্লেইম করুন।</p>
+        
+        <div id="timer" class="timer">20</div>
+        
+        <button id="claimBtn" onclick="claimTaskReward()">✅ Claim Reward</button>
+    </div>
+
+    <script>
+        let timeLeft = 20;
+        let timerElement = document.getElementById("timer");
+        let claimBtn = document.getElementById("claimBtn");
+
+        // টাইমার চালু করা
+        let countdown = setInterval(function() {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerElement.style.display = "none";
+                claimBtn.style.display = "inline-block";
+            }
+        }, 1000);
+
+        // টেলিগ্রাম বটের কাছে ডাটা পাঠাতে এই ফাংশনটি কল হবে
+        function claimTaskReward() {
+            let tg = window.Telegram.WebApp;
+            tg.expand();
+            
+            // টাকা যোগের সংকেত বটের কাছে পাঠানো হচ্ছে
+            tg.sendData(JSON.stringify({ status: "success" }));
+            
+            // মিনি অ্যাপ অটো বন্ধ হবে
+            tg.close();
+        }
+    </script>
+
+</body>
+</html>
